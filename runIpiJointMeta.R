@@ -167,7 +167,7 @@ dat2[[1]] <- dat2[[1]][,!duplicated(colnames(dat2[[1]]))]
 
 # for now, reduce to the common set of snps ****
 snps <- intersect(colnames(dat1[[1]]), colnames(dat2[[1]]))
-snps <- snps[1:10]
+# snps <- snps[1:10]
 dat1[[1]] <- dat1[[1]][ ,colnames(dat1[[1]]) %in% snps]
 dat2[[1]] <- dat2[[1]][ ,colnames(dat2[[1]]) %in% snps]
 
@@ -182,8 +182,7 @@ for( i in 1:length(snps))
 {
   dat2[[1]][,i] <- alignSnps(dat2[[1]][,i], BIM1, BIM2, colnames(dat2[[1]])[i])
 }
-#dat2[[1]] <- unlist(dat2[[1]])
-#dat2[[2]] <- unlist(dat2[[2]])
+
 print("done")
 
 
@@ -204,6 +203,6 @@ print("done")
 stopCluster(cl)
 
 print(paste0("writing to file: ", OUTNAME))
-write.table(out, OUTNAME, col.names = TRUE, row.names = FALSE, append = FALSE)
+write.table(out, OUTNAME, col.names = TRUE, row.names = FALSE, append = FALSE, quote = FALSE)
 
 # ================================================================================== #
