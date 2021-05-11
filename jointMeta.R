@@ -100,7 +100,7 @@ jointMeta <- function(model.list, geno.varname, env.varname, snpname, alpha = 0.
   
   z <- qnorm(1 - (alpha/2))
   out <- data.frame(snp = snpname,
-                    bp <- strsplit(snpname, ":")[[1]][2],
+                    bp = strsplit(snpname, ":")[[1]][2],
                     geno.b = B[1,1], 
                     geno.b.se = covB[1,1], 
                     geno.b.ci.lo = B[1] - z * sqrt(covB[1,1]),

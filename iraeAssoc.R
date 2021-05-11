@@ -95,11 +95,13 @@ iraeAssoc <- function( geno.dat, cov.dat )
 
 
 # --------------------------- iraeAssoc.priorint -------------------------------- #
-iraeAssoc.priorint <- function( geno.dat, cov.dat)
+iraeAssoc.priorint <- function( geno.dat, cov.dat, fit.only = FALSE)
 # input:
 #   geno.dat (data.frame) - snp matrix of genotype data
 #   cov.dat (data.frame) -  covariate data that contains phenotype and all other covariates
-#
+#   fit.only (boolean) - flag to return just the fit of the prior interaction model, rather
+#       than summary statistics. used for meta analysis.  
+  
 # output:
 #   df (data.frame) - summary statistics from the interaction model
 #   p will be significant if interaction or main effect of genotype are significant
@@ -147,6 +149,10 @@ iraeAssoc.priorint <- function( geno.dat, cov.dat)
   fit1 <- glm( y ~ x + Prior, family = "binomial")
   fit2 <- glm( y ~ geno.dat * Prior + x, family = "binomial")
   
+  if(fit.only ==  TRUE)
+  {
+    return(fit2)
+  }
   # interaction term will be last
   k <- dim(summary(fit2)$coefficients)[1]
   
