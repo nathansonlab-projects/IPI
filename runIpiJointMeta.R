@@ -203,6 +203,7 @@ print("done")
 
 stopCluster(cl)
 
-write.table(OUTNAME, out, col.names = TRUE, row.names = FALSE, append = FALSE)
+print(paste0("writing to file: ", OUTNAME))
+write.table(out, OUTNAME, col.names = TRUE, row.names = FALSE, append = FALSE)
 
 # ================================================================================== #
