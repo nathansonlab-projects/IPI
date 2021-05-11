@@ -137,6 +137,7 @@ OUTNAME = args[7]
 #COVARS2 = "NDose.Nivo,Stage"
 
 print("reading first set of files...")
+BIMFILE1 <- paste0(substr(BEDFILE1, 1, nchar(BEDFILE1) - 3), "bim")
 BIM1 <- read.table(BIMFILE1, header = F)
 #COVFILE1 <- read.table(COVFILE1, header = T, sep = ",")
 dat1 <- prepData(BEDFILE1, COVFILE1, COVARS1)
@@ -144,6 +145,7 @@ print('done')
 
 print('reading second set of files...')
 #COVFILE2 <- read.table(COVFILE2, header = T, sep = ",")
+BIMFILE2 <- paste0(substr(BEDFILE2, 1, nchar(BEDFILE2) - 3), "bim")
 BIM2 <- read.table(BIMFILE2, header = F)
 dat2 <- prepData(BEDFILE2, COVFILE2, COVARS2)
 print('done')
