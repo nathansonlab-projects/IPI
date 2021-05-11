@@ -174,8 +174,14 @@ dat2[[1]] <- dat2[[1]][ ,colnames(dat2[[1]]) %in% snps]
 # do i need to align snps? wont hetereogenity test catch this?
 print("aligning snps...")
 
-dat2[[1]] <- apply(dat2[[1]], 2, alignSnps, BIM1, BIM2, colnames(dat2[[1]])[j])
+# cant do this with apply because i need to specify both the column and the snp name
+# maybe there is a better solution
+#dat2[[1]] <- apply(dat2[[1]], 2, alignSnps, BIM1, BIM2, colnames(dat2[[1]])[j])
 
+for( i in 1:length(snps))
+{
+  dat2[[1]][,i] <- alignSnps(dat2[[1]][,i], BIM1, BIM2, colnames(dat2[[1]])[i])
+}
 #dat2[[1]] <- unlist(dat2[[1]])
 #dat2[[2]] <- unlist(dat2[[2]])
 print("done")
