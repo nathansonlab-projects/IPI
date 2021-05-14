@@ -109,37 +109,36 @@ runJointMetaSNP <- function(snp, dat1, dat2)
 # ================================= MAIN  ========================================== #
 # ================================================================================== #
 
-# args = commandArgs(trailingOnly=TRUE)
+args = commandArgs(trailingOnly=TRUE)
 # 
 # #  perform joint meta analysis of 2 datasets
-# if( length(args) < 7 )
-# {
-#   print("need to provide 6 arguments: BEDFILE1 COVFILE1 COVARS1 BEDFILE2 COVFILE2 COVARS2 OUTNAME")
-#   print(" ")
-#   stop()
-# }
-# 
-# #  how can i generalize this to n studies?
-# BEDFILE1 = args[1]
-# COVFILE1 = args[2]
-# COVARS1 = args[3]
-# 
-# BEDFILE2 = args[4]
-# COVFILE2 = args[5]
-# COVARS2  = args[6]
-# 
-# OUTNAME = args[7]
+if( length(args) < 7 )
+{
+  print("need to provide 6 arguments: BEDFILE1 COVFILE1 COVARS1 BEDFILE2 COVFILE2 COVARS2 OUTNAME")
+  print(" ")
+  stop()
+}
 
-# did i run the correct ipinvio bed file?
-BEDFILE1 = "chr22-all-QC2.bed"
-BIMFILE1 = "chr22-all-QC2.bim"
-COVFILE1 = "../../ipi.nivo.pheno.txt"
-COVARS1 = "studyarm,NDoseIpi_2L"
-BEDFILE2 = "nivo-chr22.qc.bed"
-BIMFILE2 = "nivo-chr22.qc.bim"
-COVFILE2 =  "../../nivo.pheno.txt"
-COVARS2 = "NDose.Nivo,Stage"
-OUTNAME="test"
+#  how can i generalize this to n studies?
+BEDFILE1 = args[1]
+COVFILE1 = args[2]
+COVARS1 = args[3]
+
+BEDFILE2 = args[4]
+COVFILE2 = args[5]
+COVARS2  = args[6]
+
+OUTNAME = args[7]
+
+# BEDFILE1 = "chr22-all-QC2.bed"
+# BIMFILE1 = "chr22-all-QC2.bim"
+# COVFILE1 = "../../ipi.nivo.pheno.txt"
+# COVARS1 = "studyarm,NDoseIpi_2L"
+# BEDFILE2 = "nivo-chr22.qc.bed"
+# BIMFILE2 = "nivo-chr22.qc.bim"
+# COVFILE2 =  "../../nivo.pheno.txt"
+# COVARS2 = "NDose.Nivo,Stage"
+# OUTNAME="test"
 print("reading first set of files...")
 print(paste0("BEDFILE1 = ", BEDFILE1))
 
@@ -171,7 +170,7 @@ dat2[[1]] <- dat2[[1]][,!duplicated(colnames(dat2[[1]]))]
 
 # for now, reduce to the common set of snps ****
 snps <- intersect(colnames(dat1[[1]]), colnames(dat2[[1]]))
-snps <- snps[1:1000]
+#snps <- snps[1:1000]
 dat1[[1]] <- dat1[[1]][ ,colnames(dat1[[1]]) %in% snps]
 dat2[[1]] <- dat2[[1]][ ,colnames(dat2[[1]]) %in% snps]
 
