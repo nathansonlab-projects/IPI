@@ -26,12 +26,16 @@ jointMeta <- function(model.list, geno.varname, env.varname, snpname, alpha = 0.
   int.varname <- paste(geno.varname, env.varname, sep = ":")
   nv <- c(geno.varname, int.varname)
   b <- c()
-  
+ 
   k <- length(model.list)
   
   # reduce model.list to only valid models
   # setup b, vector of snp and snp * env coefficient estimates from the individual models
-  for( i in 1:k)
+  
+  i = 1    # the current index
+  ct = 0  # count number of iterations; stop when reach k
+  
+  repeat
   {
     coef <- summary(model.list[[i]])$coefficients
     
@@ -44,9 +48,15 @@ jointMeta <- function(model.list, geno.varname, env.varname, snpname, alpha = 0.
     {
       b.tmp <- coef[nv,1]
       b <- c(b, b.tmp)
+      i <- i + 1
     }
     
-  }
+    ct <- ct + 1
+    if( ct  == k )
+    {
+      break
+    }
+  } 
   
   # recalculate k now that invalid models are removed
   k <- length(model.list)
@@ -75,6 +85,7 @@ jointMeta <- function(model.list, geno.varname, env.varname, snpname, alpha = 0.
   
   for( i in 1:k)
   {
+    
     # get covariance matrices
     # vcov is identical to:
     #   X <- cbind(1, genotype, prior, genotype * prior)

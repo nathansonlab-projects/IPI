@@ -2,7 +2,7 @@
 # pluta 5/11/21
 # v0.1
 
-# setwd("~/Documents/nathansonlab/IPI/Meta/ipinivo_priorint/")
+setwd("~/Documents/nathansonlab/IPI/Meta/ipinivo_priorint/")
 library(BEDMatrix) 
 library(parallel)
 library(pbapply)
@@ -88,12 +88,14 @@ runJointMetaSNP <- function(snp, dat1, dat2)
 # input: snp (string), snp of interest, should be a column of dat1 and dat2
 # output: df (data.frame), summary statistics for the joint meta analysis of snp
 {
+  
   ind <- colnames(dat1[[1]]) == snp
   
   # this needs to be a model.obj, oops
   fit1 <- iraeAssoc.priorint( dat1[[1]][,ind], dat1[[2]], fit.only = TRUE)
   fit2 <- iraeAssoc.priorint( dat2[[1]][,ind], dat2[[2]], fit.only = TRUE)
   df <- jointMeta(list(fit1, fit2), "geno.dat", "Prior", colnames(dat1[[1]])[ind]) 
+
   return(df)
 }
 # ---------------------------------------------------------------------------------- #
@@ -107,35 +109,37 @@ runJointMetaSNP <- function(snp, dat1, dat2)
 # ================================= MAIN  ========================================== #
 # ================================================================================== #
 
-args = commandArgs(trailingOnly=TRUE)
+# args = commandArgs(trailingOnly=TRUE)
+# 
+# #  perform joint meta analysis of 2 datasets
+# if( length(args) < 7 )
+# {
+#   print("need to provide 6 arguments: BEDFILE1 COVFILE1 COVARS1 BEDFILE2 COVFILE2 COVARS2 OUTNAME")
+#   print(" ")
+#   stop()
+# }
+# 
+# #  how can i generalize this to n studies?
+# BEDFILE1 = args[1]
+# COVFILE1 = args[2]
+# COVARS1 = args[3]
+# 
+# BEDFILE2 = args[4]
+# COVFILE2 = args[5]
+# COVARS2  = args[6]
+# 
+# OUTNAME = args[7]
 
-#  perform joint meta analysis of 2 datasets
-if( length(args) < 7 )
-{
-  print("need to provide 6 arguments: BEDFILE1 COVFILE1 COVARS1 BEDFILE2 COVFILE2 COVARS2 OUTNAME")
-  print(" ")
-  stop()
-}
-
-#  how can i generalize this to n studies?
-BEDFILE1 = args[1]
-COVFILE1 = args[2]
-COVARS1 = args[3]
-
-BEDFILE2 = args[4]
-COVFILE2 = args[5]
-COVARS2  = args[6]
-
-OUTNAME = args[7]
-#BEDFILE1 = "chr22-ipinivo-QC2.bed"
-#BIMFILE1 = "chr22-ipinivo-QC.bim"
-#COVFILE1 = "../../ipi.nivo.pheno.txt"
-#COVARS1 = "studyarm,NDoseIpi_2L"
-#BEDFILE2 = "nivo-chr22.qc.bed"
-#BIMFILE2 = "nivo-chr22.qc.bim"
-#COVFILE2 =  "../../nivo.pheno.txt"
-#COVARS2 = "NDose.Nivo,Stage"
-
+# did i run the correct ipinvio bed file?
+BEDFILE1 = "chr22-all-QC2.bed"
+BIMFILE1 = "chr22-all-QC2.bim"
+COVFILE1 = "../../ipi.nivo.pheno.txt"
+COVARS1 = "studyarm,NDoseIpi_2L"
+BEDFILE2 = "nivo-chr22.qc.bed"
+BIMFILE2 = "nivo-chr22.qc.bim"
+COVFILE2 =  "../../nivo.pheno.txt"
+COVARS2 = "NDose.Nivo,Stage"
+OUTNAME="test"
 print("reading first set of files...")
 print(paste0("BEDFILE1 = ", BEDFILE1))
 
@@ -167,7 +171,7 @@ dat2[[1]] <- dat2[[1]][,!duplicated(colnames(dat2[[1]]))]
 
 # for now, reduce to the common set of snps ****
 snps <- intersect(colnames(dat1[[1]]), colnames(dat2[[1]]))
-# snps <- snps[1:10]
+snps <- snps[1:1000]
 dat1[[1]] <- dat1[[1]][ ,colnames(dat1[[1]]) %in% snps]
 dat2[[1]] <- dat2[[1]][ ,colnames(dat2[[1]]) %in% snps]
 
@@ -194,10 +198,17 @@ clusterExport(cl, list("iraeAssoc.priorint", "jointMeta", "bdiag"))
 print("done")
 
 print("running meta-analysis...")
-out <- pblapply(snps, runJointMetaSNP, dat1, dat2, cl = cl)
+#out <- pblapply(snps, runJointMetaSNP, dat1, dat2, cl = cl)
 
+for(i in 1:length(snps))
+{
+  snp <- snps[i]
+  print(paste0("snp ", snp))
+  runJointMetaSNP(snp, dat1, dat2)
+  print("done")
+}
 # convert list output to df
-out <- do.call(rbind.data.frame, out)
+#out <- do.call(rbind.data.frame, out)
 print("done")
 
 stopCluster(cl)
