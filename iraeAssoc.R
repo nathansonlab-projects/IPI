@@ -78,7 +78,7 @@ iraeAssoc <- function( geno.dat, cov.dat )
   x <- as.matrix(cov.dat[,!(colnames(cov.dat) %in% c("Prior", "irae3", "Surv_Months", "Vital_Status_2yrs"))])
   y <- cov.dat$irae3
   
-  print(paste0("run model with covariates; ", colnames(x)))
+  # print(paste0("run model with covariates; ", colnames(x)))
   # have to pass the whole df and specify the covariates of interest
   fit  <- glm(y ~ geno.dat + x , family = "binomial")
   
@@ -144,7 +144,7 @@ iraeAssoc.priorint <- function( geno.dat, cov.dat, fit.only = FALSE)
   x <- as.matrix(cov.dat[,!(colnames(cov.dat) %in% c("Prior", "irae3", "Surv_Months", "Vital_Status_2yrs"))])
   y <- cov.dat$irae3
   
-  print(paste0("run model with covariates; Prior ", colnames(x)))
+  # print(paste0("run model with covariates; Prior ", colnames(x)))
   Prior <- cov.dat$Prior
   fit1 <- glm( y ~ x + Prior, family = "binomial")
   fit2 <- glm( y ~ geno.dat * Prior + x, family = "binomial")
@@ -245,7 +245,7 @@ coxPH <- function( geno.dat, cov.dat)
   # retain only descriptive covariates
   x <- as.matrix(cov.dat[,!(colnames(cov.dat) %in% c("Prior", "irae3", "Surv_Months", "Vital_Status_2yrs"))])
   y <- Surv(cov.dat$Surv_Months, cov.dat$Vital_Status_2yrs)
-  print(paste0("run model with covariates; ", colnames(x)))
+  # print(paste0("run model with covariates; ", colnames(x)))
   fit <- coxph(y ~ geno.dat + x )
   b <- summary(fit)$coefficients[1,1]
   b.se <- summary(fit)$coefficients[1,3]
@@ -315,7 +315,7 @@ coxPH.priorint <- function( geno.dat, cov.dat )
   # retain only descriptive covariates
   x <- as.matrix(cov.dat[,!(colnames(cov.dat) %in% c("Prior", "irae3", "Surv_Months", "Vital_Status_2yrs"))])
   y <- Surv(cov.dat$Surv_Months, cov.dat$Vital_Status_2yrs)
-  print(paste0("run model with covariates; Prior, ", colnames(x)))
+  # print(paste0("run model with covariates; Prior, ", colnames(x)))
  
   
   fit1 <- coxph(data = cov.dat, y ~ Prior + x )

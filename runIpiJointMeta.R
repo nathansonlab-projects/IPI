@@ -2,7 +2,7 @@
 # pluta 5/11/21
 # v0.1
 
-setwd("~/Documents/nathansonlab/IPI/Meta/ipinivo_priorint/")
+#setwd("~/Documents/nathansonlab/IPI/Meta/ipinivo_priorint/")
 library(BEDMatrix) 
 library(parallel)
 library(pbapply)
@@ -197,17 +197,17 @@ clusterExport(cl, list("iraeAssoc.priorint", "jointMeta", "bdiag"))
 print("done")
 
 print("running meta-analysis...")
-#out <- pblapply(snps, runJointMetaSNP, dat1, dat2, cl = cl)
+out <- pblapply(snps, runJointMetaSNP, dat1, dat2, cl = cl)
 
-for(i in 1:length(snps))
-{
-  snp <- snps[i]
-  print(paste0("snp ", snp))
-  runJointMetaSNP(snp, dat1, dat2)
-  print("done")
-}
+# for(i in 1:length(snps))
+# {
+#   snp <- snps[i]
+#   print(paste0("snp ", snp))
+#   runJointMetaSNP(snp, dat1, dat2)
+#   print("done")
+# }
 # convert list output to df
-#out <- do.call(rbind.data.frame, out)
+out <- do.call(rbind.data.frame, out)
 print("done")
 
 stopCluster(cl)
