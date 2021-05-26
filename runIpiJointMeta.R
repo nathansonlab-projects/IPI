@@ -2,7 +2,7 @@
 # pluta 5/11/21
 # v0.1
 
-#setwd("~/Documents/nathansonlab/IPI/Meta/ipinivo_priorint/")
+#setwd("~/Documents/nathansonlab/IPI/Nivo/noprior-irae")
 library(BEDMatrix) 
 library(parallel)
 library(pbapply)
@@ -13,7 +13,7 @@ source("~/IPI/jointMeta.R")
 source("~/IPI/iraeAssoc.R")
 source("~/gwas_tools/alignSnps.R")
 
-
+# todo: add average MAF
 # ================================================================================= #
 # ======================================= functions =============================== #
 # ================================================================================= #
@@ -90,12 +90,23 @@ runJointMetaSNP <- function(snp, dat1, dat2)
 {
   
   ind <- colnames(dat1[[1]]) == snp
+  g1 <- dat1[[1]][,ind]
+  n1 <- dim(dat1[[1]])
+  
+  g2 <- dat2[[1]][,ind]
+  n2 <- dim(dat2[[1]])
   
   # this needs to be a model.obj, oops
   fit1 <- iraeAssoc.priorint( dat1[[1]][,ind], dat1[[2]], fit.only = TRUE)
   fit2 <- iraeAssoc.priorint( dat2[[1]][,ind], dat2[[2]], fit.only = TRUE)
+  
+  # compute average maf
+  maf1 <- sum(g1) / (length(g1) * 2)
+  maf2 <- sum(g2) / (length(g2) * 2)
+  
   df <- jointMeta(list(fit1, fit2), "geno.dat", "Prior", colnames(dat1[[1]])[ind]) 
-
+  df$avg.maf <- ((n1 * maf1) + (n2 * maf2)) / (n1 + n2)
+  
   return(df)
 }
 # ---------------------------------------------------------------------------------- #
@@ -110,7 +121,7 @@ runJointMetaSNP <- function(snp, dat1, dat2)
 # ================================================================================== #
 
 args = commandArgs(trailingOnly=TRUE)
-# 
+#
 # #  perform joint meta analysis of 2 datasets
 if( length(args) < 7 )
 {
@@ -199,6 +210,7 @@ print("done")
 print("running meta-analysis...")
 out <- pblapply(snps, runJointMetaSNP, dat1, dat2, cl = cl)
 
+# for debugging
 # for(i in 1:length(snps))
 # {
 #   snp <- snps[i]
@@ -207,6 +219,7 @@ out <- pblapply(snps, runJointMetaSNP, dat1, dat2, cl = cl)
 #   print("done")
 # }
 # convert list output to df
+
 out <- do.call(rbind.data.frame, out)
 print("done")
 
