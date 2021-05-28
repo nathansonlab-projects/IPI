@@ -194,13 +194,15 @@ dat2[[1]] <- dat2[[1]][ ,colnames(dat2[[1]]) %in% snps]
 # maybe there is a better solution
 
 tmp1 <- c()
-for( i in colnames(dat2[[1]][,1:10]))
+for( i in colnames(dat2[[1]])[1:10])
 {
-   print(i)
+  print(i)
+  print(paste0("exists(BIM1) = ", exists(BIM1)))
+  print(paste0("exists(BIM2) = ", exists(BIM2)))
   tmp1 <- cbind(tmp1, alignSnps(i, BIM1, BIM2, dat2[[1]]))
 }
 
-stop()
+#stop()
 
 
 print("setting up parallel processing..")
@@ -208,7 +210,7 @@ cl <- parallel::makeCluster(detectCores(), setup_strategy = "sequential")
 
 # export necessary functions
 clusterExport(cl, list("iraeAssoc.priorint", "jointMeta", "bdiag", "checkGenoFlip",
-                       "flipGeno", "flipAllele", "speedglm"))
+                       "flipGeno", "flipAllele", "speedglm", "alignSnps"))
 print("done")
 
 
