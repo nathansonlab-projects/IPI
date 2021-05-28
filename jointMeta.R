@@ -38,7 +38,7 @@ jointMeta <- function(model.list, geno.varname, env.varname, snpname, alpha = 0.
   repeat
   {
     coef <- summary(model.list[[i]])$coefficients
-    
+    coef <- coef[!is.na(coef$Estimate),]
     # if the interaction term is NA, remove this model from the list
     # occurs when there is only 1 unique combination of genotype * env
     if( !(int.varname %in% rownames(coef)) )
