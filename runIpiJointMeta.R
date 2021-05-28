@@ -120,39 +120,39 @@ runJointMetaSNP <- function(snp, dat1, dat2)
 # ================================= MAIN  ========================================== #
 # ================================================================================== #
 
-# args = commandArgs(trailingOnly=TRUE)
-# #
-# # #  perform joint meta analysis of 2 datasets
-# if( length(args) < 7 )
-# {
-#   print("need to provide 6 arguments: BEDFILE1 COVFILE1 COVARS1 BEDFILE2 COVFILE2 COVARS2 OUTNAME")
-#   print(" ")
-#   stop()
-# }
-# 
-# #  how can i generalize this to n studies?
-# BEDFILE1 = args[1]
-# COVFILE1 = args[2]
-# COVARS1 = args[3]
-# 
-# BEDFILE2 = args[4]
-# COVFILE2 = args[5]
-# COVARS2  = args[6]
-# 
-# OUTNAME = args[7]
+args = commandArgs(trailingOnly=TRUE)
+#
+# #  perform joint meta analysis of 2 datasets
+if( length(args) < 7 )
+{
+  print("need to provide 6 arguments: BEDFILE1 COVFILE1 COVARS1 BEDFILE2 COVFILE2 COVARS2 OUTNAME")
+  print(" ")
+  stop()
+}
+
+#  how can i generalize this to n studies?
+BEDFILE1 = args[1]
+COVFILE1 = args[2]
+COVARS1 = args[3]
+
+BEDFILE2 = args[4]
+COVFILE2 = args[5]
+COVARS2  = args[6]
+
+OUTNAME = args[7]
 
 
-setwd("~/Documents/nathansonlab/IPI/Meta/test")
+# setwd("~/Documents/nathansonlab/IPI/Meta/test")
 
-BEDFILE1 = "chr22-all-QC2.bed"
-BIMFILE1 = "chr22-all-QC2.bim"
-COVFILE1 = "ipi.nivo.pheno.txt"
-COVARS1 = "studyarm,NDoseIpi_2L"
-BEDFILE2 = "nivo-chr22.qc.bed"
-BIMFILE2 = "nivo-chr22.qc.bim"
-COVFILE2 =  "../../Nivo/nivo.pheno.txt"
-COVARS2 = "NDose.Nivo,Stage"
-OUTNAME="test"
+# BEDFILE1 = "chr22-all-QC2.bed"
+# BIMFILE1 = "chr22-all-QC2.bim"
+# COVFILE1 = "ipi.nivo.pheno.txt"
+# COVARS1 = "studyarm,NDoseIpi_2L"
+# BEDFILE2 = "nivo-chr22.qc.bed"
+# BIMFILE2 = "nivo-chr22.qc.bim"
+# COVFILE2 =  "../../Nivo/nivo.pheno.txt"
+# COVARS2 = "NDose.Nivo,Stage"
+# OUTNAME="test"
 print("reading first set of files...")
 print(paste0("BEDFILE1 = ", BEDFILE1))
 
