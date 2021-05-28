@@ -11,7 +11,7 @@ library(Matrix)
 
 source("~/IPI/jointMeta.R")
 source("~/IPI/iraeAssoc.R")
-source("~/gwas_tools/alignSnps.R")
+source("~/IPI/alignSnps.R")
 
 # todo: add average MAF
 # ================================================================================= #
