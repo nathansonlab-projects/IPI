@@ -2,7 +2,7 @@
 # pluta 5/11/21
 # v0.1
 
-#setwd("~/Documents/nathansonlab/IPI/Nivo/noprior-irae")
+
 library(BEDMatrix) 
 library(parallel)
 library(pbapply)
@@ -91,10 +91,10 @@ runJointMetaSNP <- function(snp, dat1, dat2)
   
   ind <- colnames(dat1[[1]]) == snp
   g1 <- dat1[[1]][,ind]
-  n1 <- dim(dat1[[1]])
+  n1 <- dim(dat1[[1]])[1]
   
   g2 <- dat2[[1]][,ind]
-  n2 <- dim(dat2[[1]])
+  n2 <- dim(dat2[[1]])[1]
   
   # this needs to be a model.obj, oops
   fit1 <- iraeAssoc.priorint( dat1[[1]][,ind], dat1[[2]], fit.only = TRUE)
@@ -120,36 +120,39 @@ runJointMetaSNP <- function(snp, dat1, dat2)
 # ================================= MAIN  ========================================== #
 # ================================================================================== #
 
-args = commandArgs(trailingOnly=TRUE)
-#
-# #  perform joint meta analysis of 2 datasets
-if( length(args) < 7 )
-{
-  print("need to provide 6 arguments: BEDFILE1 COVFILE1 COVARS1 BEDFILE2 COVFILE2 COVARS2 OUTNAME")
-  print(" ")
-  stop()
-}
+# args = commandArgs(trailingOnly=TRUE)
+# #
+# # #  perform joint meta analysis of 2 datasets
+# if( length(args) < 7 )
+# {
+#   print("need to provide 6 arguments: BEDFILE1 COVFILE1 COVARS1 BEDFILE2 COVFILE2 COVARS2 OUTNAME")
+#   print(" ")
+#   stop()
+# }
+# 
+# #  how can i generalize this to n studies?
+# BEDFILE1 = args[1]
+# COVFILE1 = args[2]
+# COVARS1 = args[3]
+# 
+# BEDFILE2 = args[4]
+# COVFILE2 = args[5]
+# COVARS2  = args[6]
+# 
+# OUTNAME = args[7]
 
-#  how can i generalize this to n studies?
-BEDFILE1 = args[1]
-COVFILE1 = args[2]
-COVARS1 = args[3]
 
-BEDFILE2 = args[4]
-COVFILE2 = args[5]
-COVARS2  = args[6]
+setwd("~/Documents/nathansonlab/IPI/Meta/test")
 
-OUTNAME = args[7]
-
-# BEDFILE1 = "chr22-all-QC2.bed"
-# BIMFILE1 = "chr22-all-QC2.bim"
-# COVFILE1 = "../../ipi.nivo.pheno.txt"
-# COVARS1 = "studyarm,NDoseIpi_2L"
-# BEDFILE2 = "nivo-chr22.qc.bed"
-# BIMFILE2 = "nivo-chr22.qc.bim"
-# COVFILE2 =  "../../nivo.pheno.txt"
-# COVARS2 = "NDose.Nivo,Stage"
-# OUTNAME="test"
+BEDFILE1 = "chr22-all-QC2.bed"
+BIMFILE1 = "chr22-all-QC2.bim"
+COVFILE1 = "ipi.nivo.pheno.txt"
+COVARS1 = "studyarm,NDoseIpi_2L"
+BEDFILE2 = "nivo-chr22.qc.bed"
+BIMFILE2 = "nivo-chr22.qc.bim"
+COVFILE2 =  "../../Nivo/nivo.pheno.txt"
+COVARS2 = "NDose.Nivo,Stage"
+OUTNAME="test"
 print("reading first set of files...")
 print(paste0("BEDFILE1 = ", BEDFILE1))
 
@@ -185,30 +188,50 @@ snps <- intersect(colnames(dat1[[1]]), colnames(dat2[[1]]))
 dat1[[1]] <- dat1[[1]][ ,colnames(dat1[[1]]) %in% snps]
 dat2[[1]] <- dat2[[1]][ ,colnames(dat2[[1]]) %in% snps]
 
-# do i need to align snps? wont hetereogenity test catch this?
-print("aligning snps...")
+
 
 # cant do this with apply because i need to specify both the column and the snp name
 # maybe there is a better solution
 #dat2[[1]] <- apply(dat2[[1]], 2, alignSnps, BIM1, BIM2, colnames(dat2[[1]])[j])
+# tmp1 <- c()
+# for( i in colnames(dat2[[1]][,1:10]))
+# {
+#   tmp1 <- cbind(tmp1, alignSnps(i, BIM1, BIM2, dat2[[1]]))
+# }
 
-for( i in 1:length(snps))
-{
-  dat2[[1]][,i] <- alignSnps(dat2[[1]][,i], BIM1, BIM2, colnames(dat2[[1]])[i])
-}
 
-print("done")
 
 
 print("setting up parallel processing..")
 cl <- parallel::makeCluster(detectCores(), setup_strategy = "sequential")
 
 # export necessary functions
-clusterExport(cl, list("iraeAssoc.priorint", "jointMeta", "bdiag"))
+clusterExport(cl, list("iraeAssoc.priorint", "jointMeta", "bdiag", "checkGenoFlip",
+                       "flipGeno", "flipAllele"))
 print("done")
 
+
+
+# do i need to align snps? wont hetereogenity test catch this?
+print("aligning snps...")
+n <- dim(dat2[[1]])[1]
+p <- dim(dat2[[1]])[2]
+
+tmp <- pblapply(colnames(dat2[[1]]), alignSnps, BIM1, BIM2, dat2[[1]], cl = cl)
+tmp <- matrix(unlist(tmp), nrow=n, ncol=p)
+colnames(tmp) <- colnames(dat2[[1]])
+rownames(tmp) <- rownames(dat2[[1]])
+
+dat2[[1]] <- tmp
+rm(tmp)
+
+print("done")
 print("running meta-analysis...")
+
+# start_time <- Sys.time()
 out <- pblapply(snps, runJointMetaSNP, dat1, dat2, cl = cl)
+# end_time <- Sys.time()
+# total_time <- end_time - start_time
 
 # for debugging
 # for(i in 1:length(snps))

@@ -21,6 +21,8 @@ if(!require(BEDMatrix))
 library(BEDMatrix) 
 library(parallel)
 library(pbapply)
+library(lmtest)
+library(speedglm)
 # ------------------------------------------------------------------------------- #
 
 
@@ -109,7 +111,7 @@ iraeAssoc.priorint <- function( geno.dat, cov.dat, fit.only = FALSE)
 {
   # when using multiple cores, the environment doesnt copy to each core
   # need to call libraries within function
-  library(lmtest)
+  
   if( sum(!is.na(unique(geno.dat))) == 1 )
     # all 1 genotype, cant test
   {
@@ -146,8 +148,9 @@ iraeAssoc.priorint <- function( geno.dat, cov.dat, fit.only = FALSE)
   
   # print(paste0("run model with covariates; Prior ", colnames(x)))
   Prior <- cov.dat$Prior
-  fit1 <- glm( y ~ x + Prior, family = "binomial")
-  fit2 <- glm( y ~ geno.dat * Prior + x, family = "binomial")
+  
+  fit1 <- speedglm( y ~ x + Prior, family = binomial(logit))
+  fit2 <- speedglm( y ~ geno.dat * Prior + x, family = binomial(logit))
   
   if(fit.only ==  TRUE)
   {
