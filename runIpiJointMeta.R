@@ -197,8 +197,8 @@ tmp1 <- c()
 for( i in colnames(dat2[[1]])[1:10])
 {
   print(i)
-  print(paste0("exists(BIM1) = ", exists(BIM1)))
-  print(paste0("exists(BIM2) = ", exists(BIM2)))
+  print(paste0("exists(BIM1) = ", exists("BIM1")))
+  print(paste0("exists(BIM2) = ", exists("BIM2")))
   tmp1 <- cbind(tmp1, alignSnps(i, BIM1, BIM2, dat2[[1]]))
 }
 
