@@ -125,7 +125,7 @@ args = commandArgs(trailingOnly=TRUE)
 # #  perform joint meta analysis of 2 datasets
 if( length(args) < 7 )
 {
-  print("need to provide 6 arguments: BEDFILE1 COVFILE1 COVARS1 BEDFILE2 COVFILE2 COVARS2 OUTNAME")
+  print("need to provide 7 arguments: BEDFILE1 COVFILE1 COVARS1 BEDFILE2 COVFILE2 COVARS2 OUTNAME")
   print(" ")
   stop()
 }
@@ -188,23 +188,6 @@ snps <- intersect(colnames(dat1[[1]]), colnames(dat2[[1]]))
 dat1[[1]] <- dat1[[1]][ ,colnames(dat1[[1]]) %in% snps]
 dat2[[1]] <- dat2[[1]][ ,colnames(dat2[[1]]) %in% snps]
 
-
-
-# cant do this with apply because i need to specify both the column and the snp name
-# maybe there is a better solution
-
-tmp1 <- c()
-for( i in colnames(dat2[[1]])[1:10])
-{
-  print(i)
-  print(paste0("exists(BIM1) = ", exists("BIM1")))
-  print(paste0("exists(BIM2) = ", exists("BIM2")))
-  tmp1 <- cbind(tmp1, alignSnps(i, BIM1, BIM2, dat2[[1]]))
-}
-
-#stop()
-
-
 print("setting up parallel processing..")
 cl <- parallel::makeCluster(detectCores(), setup_strategy = "sequential")
 
@@ -221,13 +204,13 @@ n <- dim(dat2[[1]])[1]
 p <- dim(dat2[[1]])[2]
 
 
-tmp <- pblapply(colnames(dat2[[1]]), alignSnps, BIM1, BIM2, dat2[[1]], cl = cl)
-tmp <- matrix(unlist(tmp), nrow=n, ncol=p)
-colnames(tmp) <- colnames(dat2[[1]])
-rownames(tmp) <- rownames(dat2[[1]])
+#tmp <- pblapply(colnames(dat2[[1]]), alignSnps, BIM1, BIM2, dat2[[1]], cl = cl)
+#tmp <- matrix(unlist(tmp), nrow=n, ncol=p)
+#colnames(tmp) <- colnames(dat2[[1]])
+#rownames(tmp) <- rownames(dat2[[1]])
 
-dat2[[1]] <- tmp
-rm(tmp)
+#dat2[[1]] <- tmp
+#rm(tmp)
 
 print("done")
 print("running meta-analysis...")
