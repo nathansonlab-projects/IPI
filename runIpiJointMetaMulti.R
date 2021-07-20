@@ -155,7 +155,7 @@ PARAMFILE <- args[1]
 OUTNAME <- args[2]
 
 
-setup.dat <- read.table(PARAMFILE, header = FALSE)
+setup.dat <- read.table(PARAMFILE, header = FALSE, stringsAsFactors = FALSE)
 n.study <- dim(setup.dat)[1] / 4
 
 bed.list <- list()
