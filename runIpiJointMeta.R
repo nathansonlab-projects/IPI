@@ -13,7 +13,7 @@ source("~/IPI/jointMeta.R")
 source("~/IPI/iraeAssoc.R")
 source("~/IPI/alignSnps.R")
 
-# todo: add average MAF
+
 # ================================================================================= #
 # ======================================= functions =============================== #
 # ================================================================================= #
@@ -120,6 +120,7 @@ runJointMetaSNP <- function(snp, dat1, dat2)
 # ================================= MAIN  ========================================== #
 # ================================================================================== #
 
+
 args = commandArgs(trailingOnly=TRUE)
 #
 # #  perform joint meta analysis of 2 datasets
@@ -142,19 +143,19 @@ COVARS2  = args[6]
 OUTNAME = args[7]
 
 
-# setwd("~/Documents/nathansonlab/IPI/Meta/test")
-# 
-# BEDFILE1 = "chr22-all-QC2.bed"
-# BIMFILE1 = "chr22-all-QC2.bim"
-# COVFILE1 = "ipi.nivo.pheno.txt"
-# COVARS1 = "studyarm,NDoseIpi_2L"
-# BEDFILE2 = "nivo-chr22.qc.bed"
-# BIMFILE2 = "nivo-chr22.qc.bim"
-# COVFILE2 =  "../../Nivo/nivo.pheno.txt"
-# COVARS2 = "NDose.Nivo,Stage"
-# OUTNAME="test"
-# print("reading first set of files...")
-# print(paste0("BEDFILE1 = ", BEDFILE1))
+setwd("~/Documents/nathansonlab/IPI/Meta/test")
+
+BEDFILE1 = "chr22-all-QC2.bed"
+BIMFILE1 = "chr22-all-QC2.bim"
+COVFILE1 = "ipi.nivo.pheno.txt"
+COVARS1 = "studyarm,NDoseIpi_2L"
+BEDFILE2 = "nivo-chr22.qc.bed"
+BIMFILE2 = "nivo-chr22.qc.bim"
+COVFILE2 =  "../../Nivo/nivo.pheno.txt"
+COVARS2 = "NDose.Nivo,Stage"
+OUTNAME="test"
+print("reading first set of files...")
+print(paste0("BEDFILE1 = ", BEDFILE1))
 
 BIMFILE1 <- paste0(substr(BEDFILE1, 1, nchar(BEDFILE1) - 3), "bim")
 print(paste0("BIMFILE1 = ", BIMFILE1))
@@ -184,7 +185,7 @@ dat2[[1]] <- dat2[[1]][,!duplicated(colnames(dat2[[1]]))]
 
 # for now, reduce to the common set of snps ****
 snps <- intersect(colnames(dat1[[1]]), colnames(dat2[[1]]))
-#snps <- snps[1:1000]
+snps <- snps[1:1000]
 dat1[[1]] <- dat1[[1]][ ,colnames(dat1[[1]]) %in% snps]
 dat2[[1]] <- dat2[[1]][ ,colnames(dat2[[1]]) %in% snps]
 
@@ -204,13 +205,13 @@ n <- dim(dat2[[1]])[1]
 p <- dim(dat2[[1]])[2]
 
 
-#tmp <- pblapply(colnames(dat2[[1]]), alignSnps, BIM1, BIM2, dat2[[1]], cl = cl)
-#tmp <- matrix(unlist(tmp), nrow=n, ncol=p)
-#colnames(tmp) <- colnames(dat2[[1]])
-#rownames(tmp) <- rownames(dat2[[1]])
+tmp <- pblapply(colnames(dat2[[1]]), alignSnps, BIM1, BIM2, dat2[[1]], cl = cl)
+tmp <- matrix(unlist(tmp), nrow=n, ncol=p)
+colnames(tmp) <- colnames(dat2[[1]])
+rownames(tmp) <- rownames(dat2[[1]])
 
-#dat2[[1]] <- tmp
-#rm(tmp)
+dat2[[1]] <- tmp
+rm(tmp)
 
 print("done")
 print("running meta-analysis...")

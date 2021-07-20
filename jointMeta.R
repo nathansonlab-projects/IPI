@@ -1,17 +1,17 @@
 
 # ---------------------------------------------------------------------- #
 jointMeta <- function(model.list, geno.varname, env.varname, snpname, alpha = 0.05, W = NULL)
-  # perform meta analysis for data with snp * environment interaction term from n datasets
-  # implementation of methods described in Becker & Wu, 2007, Manning et al., 2011.
-  #
-  # input:
-  #   model.list (list): entries are the glm objects from fitting each data set
-  #     eg the output of glm
-  #   geno.varname (string): name of the variable containing genotype data
-  #   env.varname (string): name of variable containing the environmental effect that
-  #     interacts with genotype
-  #   snpname (string): snp of interest  (for labeling output)
-  #   alpha (numeric): alpha-level for confidence intervals. default to 95% 
+# perform meta analysis for data with snp * environment interaction term from n datasets
+# implementation of methods described in Becker & Wu, 2007, Manning et al., 2011.
+#
+# input:
+#   model.list (list): entries are the glm objects from fitting each data set
+#     eg the output of glm
+#   geno.varname (string): name of the variable containing genotype data
+#   env.varname (string): name of variable containing the environmental effect that
+#     interacts with genotype
+#   snpname (string): snp of interest  (for labeling output)
+#   alpha (numeric): alpha-level for confidence intervals. default to 95% 
 #   W (matrix): optional; weight-matrix if you using anything but the standard identity matrix
 #   e.g., if including terms other than interaction and genotype main effect
 #
@@ -62,17 +62,19 @@ jointMeta <- function(model.list, geno.varname, env.varname, snpname, alpha = 0.
   k <- length(model.list)
   
   # I needs to be 2x2 at minimum, even with only one study included
-  if( k == 1)
-  {
-    I <- diag(1, nrow=2, ncol=2)
-  } else 
-  {
-    I <- diag(1, nrow=k, ncol=k)
-  }
+  # if( k == 1)
+  # {
+  #   I <- diag(1, nrow=2, ncol=2)
+  # } else 
+  # {
+  #   I <- diag(1, nrow=k, ncol=k)
+  # }
+  
+  I <- diag(1, nrow=2, ncol=2)
   
   sigma.list <- list()
   
-  if( is.null(W))
+  if( is.null(W) )
   {
     W <- c()
     for( i in 1:k)

@@ -131,8 +131,6 @@ iraeAssoc.priorint <- function( geno.dat, cov.dat, fit.only = FALSE)
   }
   
 
-  print(paste0("length(geno.dat) = ", length(geno.dat)))
-  print(paste("dim(cov.dat[-ind]): ", dim(cov.dat)[1]))
   ind <- which(!(colnames(cov.dat) %in% c("PC1", "PC2", "PC3", "Prior", "irae3")))
   for( j in ind)
   {
