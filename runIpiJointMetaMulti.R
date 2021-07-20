@@ -59,6 +59,7 @@ prepData <- function(geno.dat, COVFILE, COVARS)
   {
     print("the following covars were not found in the covariate data:")
     print(covar.names[covar.names %in% colnames(cov.dat)])
+    print(paste0("colnames(cov.dat): ", colnames(cov.dat)))
     stop()
   }
   
@@ -203,7 +204,7 @@ for( i in 2:length(bed.list))
   
   # align snps in bim2 to bim1
   # dont need to align the bim files unless they are being written to output
-  print("align bed")
+  print(paste0("aligning bed", i))
   bed.list[[i]][ ,ind ] <- do.call(cbind, lapply(bim.list[[i]]$V2[ind], alignSnps, BIM1 = ref[ind,], BIM2 = bim.list[[i]][ind,], bed.list[[i]][,ind]))
   print("done")
 }
@@ -216,10 +217,15 @@ dat.list <- list()
 # sets up the data structure for runJointMetaSNP
 for( i in 1:n.study )
 {
+  print(paste0("preparing study ", i, ": "))
   
   COVFILE <- setup.dat$V1[ 3 + 4 * (i - 1)]
   COVARS <- setup.dat$V1[ 4 + 4 * (i - 1)]
+  
+  print(paste0("COVFILE = ", COVFILE))
+  print(paste0("COVARS = ", COVARS))
   dat.list[[i]] <- prepData(bed.list[[i]], COVFILE, COVARS)
+  print("done")
 }
 
 
