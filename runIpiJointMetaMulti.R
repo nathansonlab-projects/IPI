@@ -58,7 +58,7 @@ prepData <- function(geno.dat, COVFILE, COVARS)
   if(!all(covar.names %in% colnames(cov.dat)))
   {
     print("the following covars were not found in the covariate data:")
-    print(covar.names[covar.names %in% colnames(cov.dat)])
+    print(covar.names[!(covar.names %in% colnames(cov.dat))])
     print(paste0("colnames(cov.dat): ", colnames(cov.dat)))
     stop()
   }
