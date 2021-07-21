@@ -244,7 +244,7 @@ print("done")
 
 stopCluster(cl)
 
-out$chr <- unlist(lapply(strsplit(out$snp, ":"), function(x) x[1]))
+out$chr <- unlist(lapply(strsplit(as.character(out$snp), ":"), function(x) x[1]))
 
 print(paste0("writing to file: ", OUTNAME))
 write.table(out, OUTNAME, col.names = TRUE, row.names = FALSE, append = FALSE, quote = FALSE)
