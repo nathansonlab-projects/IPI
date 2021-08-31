@@ -5,7 +5,7 @@ rm(list = ls())
 # noprior - coxph, priorint - coxph)
 # writes output  with everything required for meta/pathway analysis
 
-source("iraeAssoc.R")
+source("~/IPI/iraeAssoc.R")
 
 # ------------------------------------ user input  ------------------------------ #
 args = commandArgs(trailingOnly = TRUE)
@@ -69,7 +69,7 @@ if( COVARS == "NA")
   covar.names <- c("PC1", "PC2", "PC3", "irae3", "Prior", "Surv_Months", "Vital_Status_2yrs")
 } else
 {
-  covar.names <- c(strsplit(COVARS, ",")[[1]], "PC1", "PC2", "PC3", "irae3", "Prior", "Surv_Months", "Vital_Status_2yrs")
+  covar.names <- c(strsplit(COVARS, ",")[[1]], "irae3", "Prior", "Surv_Months", "Vital_Status_2yrs")
 }
 
 if( !file.exists(BEDFILE))

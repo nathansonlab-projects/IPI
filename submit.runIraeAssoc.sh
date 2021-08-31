@@ -30,4 +30,4 @@ then
 	exit
 fi
 
-Rscript /project/knathanslab/Melanoma/runAssocIrae.R $1 $2 $3 $4 $5 $6 $7
+Rscript ~/IPI/runIraeAssoc.R $1 $2 $3 $4 $5 $6 $7
