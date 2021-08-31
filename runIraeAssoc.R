@@ -66,7 +66,7 @@ print("")
 # the list of variables we will always consider, plus the additional specified covariates
 if( COVARS == "NA")
 {
-  covar.names <- c("PC1", "PC2", "PC3", "irae3", "Prior", "Surv_Months", "Vital_Status_2yrs")
+  covar.names <- c("Prior", "Surv_Months", "Vital_Status_2yrs")
 } else
 {
   covar.names <- c(strsplit(COVARS, ",")[[1]], "irae3", "Prior", "Surv_Months", "Vital_Status_2yrs")
