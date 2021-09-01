@@ -113,12 +113,16 @@ print("done")
 if( MDL == 1)
 {
   # make sure you specified the right covar names
-  if(any(!(covar.names %in% colnames(cov.dat))))
+  if(!is.na(covar.names))
   {
-    ind <- which( !(covar.names %in% colnames(cov.dat)))
-    print(paste0("ERROR: the following covar names were not found in covar data:", covar.names[ind]))
-    stop()
+    if(any(!(covar.names %in% colnames(cov.dat))))
+    {
+      ind <- which( !(covar.names %in% colnames(cov.dat)))
+      print(paste0("ERROR: the following covar names were not found in covar data:", covar.names[ind]))
+      stop()
+    }
   }
+  
   
   # if irae, drop survival data
   cov.dat <- cov.dat[,!(colnames(cov.dat) %in% c("Surv_Months", "Vital_Status_2yrs"))]
@@ -139,6 +143,16 @@ if( MDL == 1)
 # ---------------- irae, prior treatment -------------- #
 if( MDL == 2)
 {
+  if(!is.na(covar.names))
+  {
+    if(any(!(covar.names %in% colnames(cov.dat))))
+    {
+      ind <- which( !(covar.names %in% colnames(cov.dat)))
+      print(paste0("ERROR: the following covar names were not found in covar data:", covar.names[ind]))
+      stop()
+    }
+  }
+  
   print("run glms for irae prior-interaction model...")
   outname <- paste0(OUTPREFIX,"-chr", CHR, "-priorint.irae.txt")
   runSNP.glm.parallel( geno.dat, 
@@ -155,6 +169,16 @@ if( MDL == 2)
 # ------------------ coxph no prior ------------------- #
 if( MDL == 3)
 {
+  if(!is.na(covar.names))
+  {
+    if(any(!(covar.names %in% colnames(cov.dat))))
+    {
+      ind <- which( !(covar.names %in% colnames(cov.dat)))
+      print(paste0("ERROR: the following covar names were not found in covar data:", covar.names[ind]))
+      stop()
+    }
+  }
+  
   print("run glms for coxph no prior model...")
   outname <- paste0(OUTPREFIX,"-chr", CHR, "-noprior.coxph.txt")
   runSNP.glm.parallel( geno.dat[ cov.dat$Prior == 0,], 
@@ -171,6 +195,16 @@ if( MDL == 3)
 # ----------------- coxph prior int ------------------- #
 if( MDL == 4)
 {
+  if(!is.na(covar.names))
+  {
+    if(any(!(covar.names %in% colnames(cov.dat))))
+    {
+      ind <- which( !(covar.names %in% colnames(cov.dat)))
+      print(paste0("ERROR: the following covar names were not found in covar data:", covar.names[ind]))
+      stop()
+    }
+  }
+  
   print("run glms for coxph prior-interaction model...")
   outname <- paste0(OUTPREFIX,"-chr", CHR, "-priorint.coxph.txt")
   runSNP.glm.parallel( geno.dat, 
@@ -187,11 +221,14 @@ if( MDL == 4)
 if( MDL == 5)
 {
   # make sure you specified the right covar names
-  if(any(!(covar.names %in% colnames(cov.dat))))
+  if(!is.na(covar.names))
   {
-    ind <- which( !(covar.names %in% colnames(cov.dat)))
-    print(paste0("ERROR: the following covar names were not found in covar data:", covar.names[ind]))
-    stop()
+    if(any(!(covar.names %in% colnames(cov.dat))))
+    {
+      ind <- which( !(covar.names %in% colnames(cov.dat)))
+      print(paste0("ERROR: the following covar names were not found in covar data:", covar.names[ind]))
+      stop()
+    }
   }
   
   # if irae, drop survival data
