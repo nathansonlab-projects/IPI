@@ -64,7 +64,7 @@ print(paste0("OUTPREFIX = ", OUTPREFIX))
 print("")
 
 # the list of variables we will always consider, plus the additional specified covariates
-if( COVARS == "NA")
+if( is.na(COVARS) )
 {
   covar.names <- c("Prior", "Surv_Months", "Vital_Status_2yrs")
 } else
@@ -92,6 +92,7 @@ if(all(is.na(match(rownames(geno.dat), cov.dat$GWASID))))
   stop("could not match geno.dat subject ids to cov.dat subjects ids")
 }
 
+geno.dat <- geno.dat[ rownames(geno.dat)  %in% cov.dat$GWASID,]
 cov.dat <- cov.dat[match(rownames(geno.dat), cov.dat$GWASID),]
 cov.dat <- cov.dat[ ,colnames(cov.dat) %in% covar.names,]
 print("done")
