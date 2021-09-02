@@ -64,12 +64,12 @@ print(paste0("MAF = ", MAF))
 print(paste0("OUTPREFIX = ", OUTPREFIX))
 print("")
 
-BEDFILE = "chr22/HRC/Imputed/chr22.qc.bed"
-COVARS = FALSE
-COVFILE = "bms1004.pheno.txt"
-CHR = 22
-MAF = "chr22/HRC/Imputed/chr22.qc.frq"
-OUTPREFIX = "bms1004"
+# BEDFILE = "chr22/HRC/Imputed/chr22.qc.bed"
+# COVARS = FALSE
+# COVFILE = "bms1004.pheno.txt"
+# CHR = 22
+# MAF = "chr22/HRC/Imputed/chr22.qc.frq"
+# OUTPREFIX = "bms1004"
 
 
 
