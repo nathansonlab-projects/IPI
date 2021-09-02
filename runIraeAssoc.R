@@ -14,7 +14,7 @@ if( length(args) < 7)
 {
   print("need to provide 7 arguments: BEDFILE COVARS COVFILE CHR MODEL MAF OUTNAME")
   print("BEDFILE: plink .bed file of genotype data, must have corresponding .bim and .fam files")
-  print("COVARS: list of covariates to use in the model, in a comma seperated list")
+  print("COVARS: list of covariates to use in the model, in a comma seperated list; or FALSE if no covariates are used")
   print("COVFILE: file of covariate data (ipi.nivo.pheno.txt)")
   print("CHR: numeric chromosome of interest")
   print("Model: choice of 1-5:")
@@ -23,9 +23,9 @@ if( length(args) < 7)
   print("3: coxph, no prior treatemt")
   print("4: coxph, prior interaction")
   print("5: irae, all subjects")
-  print("OUTPREFIX: prefix attached to all output files")
+  print("If COVARS=FALSE, MDL is overridden")
   print("")
-  print("If no covariates are used, set COVARS to NA")
+  print("OUTPREFIX: prefix attached to all output files")
   print("")
   print("")
   print(paste0("you provided ", length(args), " arguments:"))
@@ -59,25 +59,22 @@ print(paste0("BEDFILE = ", BEDFILE))
 print(paste0("COVARS = ", COVARS))
 print(paste0("COVFILE = ", COVFILE))
 print(paste0("CHR = ", CHR))
+print(paste0("MDL = ", MDL))
 print(paste0("MAF = ", MAF))
 print(paste0("OUTPREFIX = ", OUTPREFIX))
 print("")
 
 BEDFILE = "chr22/HRC/Imputed/chr22.qc.bed"
-COVARS = NA
+COVARS = FALSE
 COVFILE = "bms1004.pheno.txt"
 CHR = 22
 MAF = "chr22/HRC/Imputed/chr22.qc.frq"
 OUTPREFIX = "bms1004"
 
-# args will read NA as text rather than value
-if(COVARS == "NA")
-{
-  COVARS <- NA
-}
+
 
 # the list of variables we will always consider, plus the additional specified covariates
-if( !is.na(COVARS) )
+if( COVARS != FALSE )
 {
   covar.names <- c(strsplit(COVARS, ",")[[1]], "irae3", "Prior", "Surv_Months", "Vital_Status_2yrs")
   cov.dat <- cov.dat[ ,colnames(cov.dat) %in% covar.names,]
@@ -118,8 +115,9 @@ colnames(BIM) <- c("chr", "MarkerName", "GD", "bp", "A1", "A2")
 cl <- parallel::makeCluster(detectCores(), setup_strategy = "sequential")
 print("done")
 
-
-if( is.na(COVARS))
+# simple case where  no coviarates are included
+#  this overrides MDL variable
+if( COVARS = FALSE)
 {
   out <- pbapply(geno.dat,   
                  2,              # apply to columns

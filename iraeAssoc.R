@@ -34,8 +34,9 @@ library(speedglm)
 # =============================================================================== #
 
 
-
+# -------------------------------- snpAssocSimple ------------------------------------ #
 snpAssocSimple <- function( geno.dat, cov.dat )
+# association of  genotype and irae, with no covariates
 {
   if( sum(!is.na(unique(geno.dat))) == 1 )
   {
@@ -64,7 +65,7 @@ snpAssocSimple <- function( geno.dat, cov.dat )
   colnames(df) <- c("b", "b.se", "b.p")
   return(df)
 }
-
+# ----------------------------------------------------------------------------------- #
 
 
 # -------------------------------- iraeAssoc ------------------------------------ #
