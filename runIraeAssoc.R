@@ -63,13 +63,24 @@ print(paste0("MAF = ", MAF))
 print(paste0("OUTPREFIX = ", OUTPREFIX))
 print("")
 
-# the list of variables we will always consider, plus the additional specified covariates
-if( is.na(COVARS) )
+BEDFILE = "chr22/HRC/Imputed/chr22.qc.bed"
+COVARS = NA
+COVFILE = "bms1004.pheno.txt"
+CHR = 22
+MAF = "chr22/HRC/Imputed/chr22.qc.frq"
+OUTPREFIX = "bms1004"
+
+# args will read NA as text rather than value
+if(COVARS == "NA")
 {
-  covar.names <- c("Prior", "Surv_Months", "Vital_Status_2yrs")
-} else
+  COVARS <- NA
+}
+
+# the list of variables we will always consider, plus the additional specified covariates
+if( !is.na(COVARS) )
 {
   covar.names <- c(strsplit(COVARS, ",")[[1]], "irae3", "Prior", "Surv_Months", "Vital_Status_2yrs")
+  cov.dat <- cov.dat[ ,colnames(cov.dat) %in% covar.names,]
 }
 
 if( !file.exists(BEDFILE))
@@ -94,7 +105,7 @@ if(all(is.na(match(rownames(geno.dat), cov.dat$GWASID))))
 
 geno.dat <- geno.dat[ rownames(geno.dat)  %in% cov.dat$GWASID,]
 cov.dat <- cov.dat[match(rownames(geno.dat), cov.dat$GWASID),]
-cov.dat <- cov.dat[ ,colnames(cov.dat) %in% covar.names,]
+
 print("done")
 
 print("setting up cores for parallel processing....")
@@ -106,6 +117,46 @@ colnames(BIM) <- c("chr", "MarkerName", "GD", "bp", "A1", "A2")
 # macOS workaround
 cl <- parallel::makeCluster(detectCores(), setup_strategy = "sequential")
 print("done")
+
+
+if( is.na(COVARS))
+{
+  out <- pbapply(geno.dat,   
+                 2,              # apply to columns
+                 snpAssocSimple,           # called function
+                 cov.dat,        # covariate data truncated to no prior subjects
+                 cl = cl)                          # number of cores
+  df <- matrix(0, nrow = length(out), ncol = length(out[[1]]))
+  df <- as.data.frame(df)
+  
+  for( i in 1:length(out) )
+  {
+    df[i,] <- out[[i]]
+  }
+  
+  colnames(df) <- colnames(out[[1]])
+  
+  # format and write data
+  BIM <- BIM[ BIM$MarkerName %in% names(out),]
+  BIM <- BIM[ match(names(out), BIM$MarkerName),]
+  df$rsid <- BIM$MarkerName
+  df$chr <- BIM$chr
+  df$bp  <- BIM$bp
+  df$chrpos <- paste(BIM$chr, BIM$bp, sep = ":")
+  
+  df$A1 <- BIM$A1
+  df$A2 <- BIM$A2
+  
+  if(any(is.na(df$p)))
+  {
+    df <- df[ !is.na(df$p),]
+  }
+  
+  MAF <- read.table(MAF, header = T)
+  df <- attachMAF( df, MAF )
+  write.table(df, outname, col.names = T, row.names = F, append = F, quote = F)
+  
+}
 
 
 

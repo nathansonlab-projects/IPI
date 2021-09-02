@@ -34,6 +34,39 @@ library(speedglm)
 # =============================================================================== #
 
 
+
+snpAssocSimple <- function( geno.dat, cov.dat )
+{
+  if( sum(!is.na(unique(geno.dat))) == 1 )
+  {
+    return(NA)
+  }
+  
+  if( all(is.na(geno.dat)) )
+  {
+    return(NA)
+  }
+  
+  if( any(is.na(geno.dat)))
+  {
+    ind <- which(is.na(geno.dat))
+    geno.dat <- geno.dat[-ind]
+    cov.dat <- cov.dat[-ind,]
+  }
+  
+  fit <- glm(cov.dat$irae3 ~ geno.dat, family  = "binomial")
+  
+  b <- summary(fit)$coefficients[2,1]
+  b.se <- summary(fit)$coefficients[2,2]
+  p <- summary(fit)$coefficients[2,4]
+  
+  df <-data.frame(b = b, b.se = b.se, p = p)
+  colnames(df) <- c("b", "b.se", "b.p")
+  return(df)
+}
+
+
+
 # -------------------------------- iraeAssoc ------------------------------------ #
 iraeAssoc <- function( geno.dat, cov.dat )
   # input:
