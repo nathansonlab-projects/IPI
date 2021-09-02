@@ -133,7 +133,7 @@ if( COVARS == FALSE)
   }
   
   colnames(df) <- colnames(out[[1]])
-  
+  outname <- paste0(OUTPREFIX,"-chr", CHR, "-noprior.irae.txt")
   # format and write data
   BIM <- BIM[ BIM$MarkerName %in% names(out),]
   BIM <- BIM[ match(names(out), BIM$MarkerName),]
@@ -152,7 +152,7 @@ if( COVARS == FALSE)
   
   MAF <- read.table(MAF, header = T)
   df <- attachMAF( df, MAF )
-  write.table(df, OUTNAME, col.names = T, row.names = F, append = F, quote = F)
+  write.table(df, outname, col.names = T, row.names = F, append = F, quote = F)
   
 }
 
