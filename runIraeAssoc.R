@@ -152,7 +152,7 @@ if( COVARS == FALSE)
   
   MAF <- read.table(MAF, header = T)
   df <- attachMAF( df, MAF )
-  write.table(df, outname, col.names = T, row.names = F, append = F, quote = F)
+  write.table(df, OUTNAME, col.names = T, row.names = F, append = F, quote = F)
   
 }
 
