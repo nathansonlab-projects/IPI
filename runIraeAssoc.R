@@ -117,7 +117,7 @@ print("done")
 
 # simple case where  no coviarates are included
 #  this overrides MDL variable
-if( COVARS = FALSE)
+if( COVARS == FALSE)
 {
   out <- pbapply(geno.dat,   
                  2,              # apply to columns
