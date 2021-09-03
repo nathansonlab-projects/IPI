@@ -96,13 +96,14 @@ if( !file.exists(COVFILE))
 
 
 print("matching genotype and covar ids")
+geno.dat <- geno.dat[ rownames(geno.dat)  %in% cov.dat$GWASID,]
+cov.dat <- cov.dat[match(rownames(geno.dat), cov.dat$GWASID),]
 if(all(is.na(match(rownames(geno.dat), cov.dat$GWASID))))
 {
   stop("could not match geno.dat subject ids to cov.dat subjects ids")
 }
 
-geno.dat <- geno.dat[ rownames(geno.dat)  %in% cov.dat$GWASID,]
-cov.dat <- cov.dat[match(rownames(geno.dat), cov.dat$GWASID),]
+
 
 print("done")
 
