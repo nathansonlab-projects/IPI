@@ -71,7 +71,10 @@ print("")
 # MAF = "chr22/HRC/Imputed/chr22.qc.frq"
 # OUTPREFIX = "bms1004"
 
-
+print("reading input...")
+geno.dat <- BEDMatrix(BEDFILE, simple_names = TRUE)
+cov.dat <- read.table(COVFILE, header = T, sep = ",")
+print("done")
 
 # the list of variables we will always consider, plus the additional specified covariates
 if( COVARS != FALSE )
@@ -91,10 +94,8 @@ if( !file.exists(COVFILE))
 }
 
 
-print("reading input...")
-geno.dat <- BEDMatrix(BEDFILE, simple_names = TRUE)
-cov.dat <- read.table(COVFILE, header = T, sep = ",")
 
+print("matching genotype and covar ids")
 if(all(is.na(match(rownames(geno.dat), cov.dat$GWASID))))
 {
   stop("could not match geno.dat subject ids to cov.dat subjects ids")
