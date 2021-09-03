@@ -71,17 +71,9 @@ print("")
 # MAF = "chr22/HRC/Imputed/chr22.qc.frq"
 # OUTPREFIX = "bms1004"
 
-print("reading input...")
-geno.dat <- BEDMatrix(BEDFILE, simple_names = TRUE)
-cov.dat <- read.table(COVFILE, header = T, sep = ",")
-print("done")
 
-# the list of variables we will always consider, plus the additional specified covariates
-if( COVARS != FALSE )
-{
-  covar.names <- c(strsplit(COVARS, ",")[[1]], "irae3", "Prior", "Surv_Months", "Vital_Status_2yrs")
-  cov.dat <- cov.dat[ ,colnames(cov.dat) %in% covar.names,]
-}
+
+
 
 if( !file.exists(BEDFILE))
 {
@@ -93,17 +85,26 @@ if( !file.exists(COVFILE))
   stop(paste0(COVFILE, " not found. Exiting"))
 }
 
-
+print("reading input...")
+geno.dat <- BEDMatrix(BEDFILE, simple_names = TRUE)
+cov.dat <- read.table(COVFILE, header = T, sep = ",")
+print("done")
 
 print("matching genotype and covar ids")
 geno.dat <- geno.dat[ rownames(geno.dat)  %in% cov.dat$GWASID,]
 cov.dat <- cov.dat[match(rownames(geno.dat), cov.dat$GWASID),]
+
 if(all(is.na(match(rownames(geno.dat), cov.dat$GWASID))))
 {
   stop("could not match geno.dat subject ids to cov.dat subjects ids")
 }
 
-
+# the list of variables we will always consider, plus the additional specified covariates
+if( COVARS != FALSE )
+{
+  covar.names <- c(strsplit(COVARS, ",")[[1]], "irae3", "Prior", "Surv_Months", "Vital_Status_2yrs")
+  cov.dat <- cov.dat[ ,colnames(cov.dat) %in% covar.names,]
+}
 
 print("done")
 
