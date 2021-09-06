@@ -169,7 +169,7 @@ if( COVARS == FALSE)
 if( MDL == 1)
 {
   # make sure you specified the right covar names
-  if(!is.na(COVARS))
+  if(!isFALSE(COVARS))
   {
     if(any(!(covar.names %in% colnames(cov.dat))))
     {
@@ -199,7 +199,7 @@ if( MDL == 1)
 # ---------------- irae, prior treatment -------------- #
 if( MDL == 2)
 {
-  if(!is.na(COVARS))
+  if(!isFalse(COVARS))
   {
     if(any(!(covar.names %in% colnames(cov.dat))))
     {
@@ -225,7 +225,7 @@ if( MDL == 2)
 # ------------------ coxph no prior ------------------- #
 if( MDL == 3)
 {
-  if(!is.na(COVARS))
+  if(!isFalse(COVARS))
   {
     if(any(!(covar.names %in% colnames(cov.dat))))
     {
@@ -251,7 +251,7 @@ if( MDL == 3)
 # ----------------- coxph prior int ------------------- #
 if( MDL == 4)
 {
-  if(!is.na(COVARS))
+  if(!isFalse(COVARS))
   {
     if(any(!(covar.names %in% colnames(cov.dat))))
     {
