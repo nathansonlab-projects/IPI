@@ -102,10 +102,14 @@ if(all(is.na(match(rownames(geno.dat), cov.dat$GWASID))))
 # the list of variables we will always consider, plus the additional specified covariates
 if( COVARS != FALSE )
 {
+  covar.names <- c("irae3", "Surv_Months", "Vital_Status_2yrs")
+  
+} else
+{
   covar.names <- c(strsplit(COVARS, ",")[[1]], "irae3", "Prior", "Surv_Months", "Vital_Status_2yrs")
-  cov.dat <- cov.dat[ ,colnames(cov.dat) %in% covar.names,]
 }
 
+cov.dat <- cov.dat[ ,colnames(cov.dat) %in% covar.names,]
 print("done")
 
 print("setting up cores for parallel processing....")
