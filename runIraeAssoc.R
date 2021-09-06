@@ -47,13 +47,7 @@ MDL=args[5]
 MAF=args[6]
 OUTPREFIX=args[7]
 
-BEDFILE="chr22.qc.bed"
-COVARS=FALSE
-COVFILE="cons.pheno.txt"
-CHR=22
-MDL=1
-MAF="chr22.qc.frq"
-OUTPREFIX="test"
+
 # ------------------------------------------------------------------------------- #
 
 
