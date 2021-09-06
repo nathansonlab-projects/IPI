@@ -66,12 +66,12 @@ print(paste0("MAF = ", MAF))
 print(paste0("OUTPREFIX = ", OUTPREFIX))
 print("")
 
-# BEDFILE = "chr22/HRC/Imputed/chr22.qc.bed"
-# COVARS = FALSE
-# COVFILE = "bms1004.pheno.txt"
-# CHR = 22
-# MAF = "chr22/HRC/Imputed/chr22.qc.frq"
-# OUTPREFIX = "bms1004"
+BEDFILE = "chr22.qc.bed"
+COVARS = FALSE
+COVFILE = "cons.pheno.txt"
+CHR = 22
+MAF = "chr22.qc.frq"
+OUTPREFIX = "test"
 
 
 
@@ -128,6 +128,7 @@ print("done")
 #  this overrides MDL variable
 if( COVARS == FALSE  )
 {
+  print("running irae assoc simple...")
   out <- pbapply(geno.dat,   
                  2,              # apply to columns
                  snpAssocSimple,           # called function
@@ -162,7 +163,7 @@ if( COVARS == FALSE  )
   MAF <- read.table(MAF, header = T)
   df <- attachMAF( df, MAF )
   write.table(df, outname, col.names = T, row.names = F, append = F, quote = F)
-  
+  print('done"')
 }
 
 
@@ -279,7 +280,7 @@ if( MDL == 4)
 if( MDL == 5)
 {
   # make sure you specified the right covar names
-  if(!is.na(COVARS))
+  if(COVARS==FALSE)
   {
     if(any(!(covar.names %in% colnames(cov.dat))))
     {
