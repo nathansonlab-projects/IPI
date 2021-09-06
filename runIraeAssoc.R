@@ -100,7 +100,7 @@ if(all(is.na(match(rownames(geno.dat), cov.dat$GWASID))))
 }
 
 # the list of variables we will always consider, plus the additional specified covariates
-if( COVARS != FALSE )
+if( COVARS != FALSE  )
 {
   covar.names <- c("irae3", "Surv_Months", "Vital_Status_2yrs")
   
@@ -124,7 +124,7 @@ print("done")
 
 # simple case where  no coviarates are included
 #  this overrides MDL variable
-if( COVARS == FALSE)
+if( COVARS == FALSE  )
 {
   out <- pbapply(geno.dat,   
                  2,              # apply to columns
@@ -169,7 +169,7 @@ if( COVARS == FALSE)
 if( MDL == 1)
 {
   # make sure you specified the right covar names
-  if(!isFALSE(COVARS))
+  if(COVARS != FALSE)
   {
     if(any(!(covar.names %in% colnames(cov.dat))))
     {
@@ -199,7 +199,7 @@ if( MDL == 1)
 # ---------------- irae, prior treatment -------------- #
 if( MDL == 2)
 {
-  if(!isFalse(COVARS))
+  if(COVARS != FALSE)
   {
     if(any(!(covar.names %in% colnames(cov.dat))))
     {
@@ -225,7 +225,7 @@ if( MDL == 2)
 # ------------------ coxph no prior ------------------- #
 if( MDL == 3)
 {
-  if(!isFalse(COVARS))
+  if(COVARS != FALSE)
   {
     if(any(!(covar.names %in% colnames(cov.dat))))
     {
@@ -251,7 +251,7 @@ if( MDL == 3)
 # ----------------- coxph prior int ------------------- #
 if( MDL == 4)
 {
-  if(!isFalse(COVARS))
+  if(COVARS != FALSE)
   {
     if(any(!(covar.names %in% colnames(cov.dat))))
     {
