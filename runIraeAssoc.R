@@ -46,6 +46,14 @@ CHR = args[4]
 MDL=args[5]
 MAF=args[6]
 OUTPREFIX=args[7]
+
+BEDFILE="chr22.qc.bed"
+COVARS=FALSE
+COVFILE="cons.pheno.txt"
+CHR=22
+MDL=1
+MAF="chr22.qc.frq"
+OUTPREFIX="test"
 # ------------------------------------------------------------------------------- #
 
 
@@ -100,7 +108,7 @@ if(all(is.na(match(rownames(geno.dat), cov.dat$GWASID))))
 }
 
 # the list of variables we will always consider, plus the additional specified covariates
-if( COVARS != FALSE  )
+if( COVARS == FALSE  )
 {
   covar.names <- c("irae3", "Surv_Months", "Vital_Status_2yrs")
   
