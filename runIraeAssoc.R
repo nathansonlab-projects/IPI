@@ -1,51 +1,57 @@
+
+#!/usr/local/bin/Rscript
 rm(list = ls())
 
-# pluta 9/14/20
+# pluta 6/26/23
 # general script  to run all 4 kinds of ipi models (noprior - irae, priorint - irae, 
 # noprior - coxph, priorint - coxph)
 # writes output  with everything required for meta/pathway analysis
 
-source("~/IPI/iraeAssoc.R")
+source("./iraeAssoc.R")
 
 # ------------------------------------ user input  ------------------------------ #
-args = commandArgs(trailingOnly = TRUE)
+suppressPackageStartupMessages(require(optparse))
 
-if( length(args) < 7)
+option_list = list(
+  make_option(c("-b", "--BEDFILE"), action="store", default = NA, type="character",
+              help = "The plink .bed file containing the genotype data"),
+  make_option(c("-c", "--COVARS"), action = "store", default = NA, type = "character",
+              help = "The list of covariates, in quotes and comma separated. This must match columns in the phenotype file. \nExample: -c 'NDose.Nivo,ECOG,studyarm'"),
+  make_option(c("-p", "--PHENOFILE"), action="store", default = NA, type="character",
+              help = "The file containing phenotype data and covariates"),
+  make_option(c("-C", "--CHR"), action="store", default = NA, type="integer",
+              help = "The chromosome of interest."),
+  make_option(c("-m", "--MODEL"), action="store", default = NA, type="integer",
+              help = "1: irae, no prior\n
+                      2: irae, prior interaction\n
+                      3: coxph, no prior\n
+                      4: coxph, prior interaction\n
+                      5: all subjects, irae"),
+  make_option(c("-M", "--MAF"), action="store", default = NA, type="character",
+              help = "The .frq file from plink (not plink2)"),
+  make_option(c("-f", "--MODELFORM"), action="store", default = NA, type="character",
+              help = "the right-hand side of a glm formulation- this allows for the includsion of interaction terms beyond prior. Do not include genotype or prior, these are added automatically. \nExample: 'LDHBL + studyarm * Stage'."),
+  make_option(c("-o", "--OUTPREFIX"), action="store", default = NA, type="character",
+              help = "Name of output files.")
+)
+
+opt_parser = OptionParser(option_list = option_list)
+opt = parse_args(opt_parser)
+
+if( (opt$help))
 {
-  print("need to provide 7 arguments: BEDFILE COVARS COVFILE CHR MODEL MAF OUTNAME")
-  print("BEDFILE: plink .bed file of genotype data, must have corresponding .bim and .fam files")
-  print("COVARS: list of covariates to use in the model, in a comma seperated list; or FALSE if no covariates are used")
-  print("COVFILE: file of covariate data (ipi.nivo.pheno.txt)")
-  print("CHR: numeric chromosome of interest")
-  print("Model: choice of 1-5:")
-  print("1: irae, no prior treatment")
-  print("2: irae, prior interaction")
-  print("3: coxph, no prior treatemt")
-  print("4: coxph, prior interaction")
-  print("5: irae, all subjects")
-  print("If COVARS=FALSE, MDL is overridden")
-  print("")
-  print("OUTPREFIX: prefix attached to all output files")
-  print("")
-  print("")
-  print(paste0("you provided ", length(args), " arguments:"))
-  print(paste0("BEDFILE = ", args[1]))
-  print(paste0("COVARS = ", args[2]))
-  print(paste0("COVFILE = ", args[3]))
-  print(paste0("CHR = ", args[4]))
-  print(paste0("MDL = ", args[5]))
-  print(paste0("MAF = ", args[6]))
-  print(paste0("OUTPREFIX = ", args[7]))
-  stop("missing necessary arguments")
+  print_help(opt_parser)
+  stop()
 }
 
-BEDFILE = args[1]
-COVARS = args[2]
-COVFILE = args[3]
-CHR = args[4]
-MDL=args[5]
-MAF=args[6]
-OUTPREFIX=args[7]
+BEDFILE = opt$BEDFILE
+COVARS = opt$COVARS
+COVFILE = opt$PHENOFILE
+CHR = opt$CHR
+MDL=opt$MODEL
+MAF=opt$MAF
+MODELFORM=opt$MODELFORM
+OUTPREFIX=opt$OUTPREFIX
 
 
 # ------------------------------------------------------------------------------- #
@@ -63,19 +69,17 @@ print(paste0("COVFILE = ", COVFILE))
 print(paste0("CHR = ", CHR))
 print(paste0("MDL = ", MDL))
 print(paste0("MAF = ", MAF))
+print(paste0("MODELFORM = ", MODELFORM))
 print(paste0("OUTPREFIX = ", OUTPREFIX))
 print("")
 
-# BEDFILE = "chr22.qc.bed"
-# COVARS = FALSE
-# COVFILE = "cons.pheno.txt"
-# CHR = 22
-# MAF = "chr22.qc.frq"
-# OUTPREFIX = "test"
-
-
-
-
+# BEDFILE="nivo-chr6.qc2.bed"
+# COVARS="studyarm,Stage,NDose.Nivo"
+# COVFILE="nivo.pheno.txt"
+# CHR=6
+# MDL=2
+# MAF="nivo-chr6.qc2.afreq"
+# MODELFORM="studyarm * Stage + NDose.Nivo"
 
 if( !file.exists(BEDFILE))
 {
@@ -89,12 +93,19 @@ if( !file.exists(COVFILE))
 
 print("reading input...")
 geno.dat <- BEDMatrix(BEDFILE, simple_names = TRUE)
+geno.dat <- geno.dat[,1:100]
 cov.dat <- read.table(COVFILE, header = T, sep = ",")
+colnames(cov.dat)[2] <- "GWASID"
 print("done")
 
 print("matching genotype and covar ids")
 geno.dat <- geno.dat[ rownames(geno.dat)  %in% cov.dat$GWASID,]
 cov.dat <- cov.dat[match(rownames(geno.dat), cov.dat$GWASID),]
+
+if( is.null(dim(geno.dat)))
+{
+  stop("geno.dat is empty, something went wrong.")
+}
 
 if(all(is.na(match(rownames(geno.dat), cov.dat$GWASID))))
 {
@@ -122,6 +133,9 @@ colnames(BIM) <- c("chr", "MarkerName", "GD", "bp", "A1", "A2")
 
 # macOS workaround
 cl <- parallel::makeCluster(detectCores(), setup_strategy = "sequential")
+clusterExport(cl = cl, c("geno.dat", "cov.dat", "MODELFORM"))
+clusterCall(cl = cl, fun = function() library("lmtest"))
+
 print("done")
 
 # simple case where  no coviarates are included
@@ -212,12 +226,17 @@ if( MDL == 2)
     }
   }
   
+  if( !exists("geno.dat"))
+  {
+    stop("prior to calling snpglmparallel, geno.dat doesnt exist")
+  }
   print("run glms for irae prior-interaction model...")
   outname <- paste0(OUTPREFIX,"-chr", CHR, "-priorint.irae.txt")
   runSNP.glm.parallel( geno.dat, 
                        cov.dat, 
                        BIM,
                        "iraeAssoc.priorint",
+                       MODELFORM,
                        MAF,
                        outname)
   print("done")
